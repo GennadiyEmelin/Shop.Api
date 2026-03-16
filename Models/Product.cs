@@ -10,6 +10,7 @@ namespace Shop.Api.Models
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public int Stock { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; } 
     }
 }

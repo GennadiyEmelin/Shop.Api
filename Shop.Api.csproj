@@ -19,6 +19,7 @@
   <ItemGroup>
     <Folder Include="Auth\" />
     <Folder Include="Infrastructure\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

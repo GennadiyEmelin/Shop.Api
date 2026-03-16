@@ -12,7 +12,7 @@ using Shop.Api.Data;
 namespace Shop.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260315200601_Init")]
+    [Migration("20260316172900_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -36,6 +36,9 @@ namespace Shop.Api.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");

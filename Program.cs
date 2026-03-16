@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Shop.Api.Data;
+using Shop.Api.Repositories;
+using Shop.Api.Services;
 
 namespace Shop.Api
 {
@@ -13,6 +15,8 @@ namespace Shop.Api
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
