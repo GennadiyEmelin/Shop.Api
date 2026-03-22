@@ -17,6 +17,7 @@ namespace Shop.Api
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

@@ -1,38 +1,29 @@
 ﻿using Shop.Api.DTO.Product;
 using Shop.Api.Models;
 using Shop.Api.Repositories;
+using AutoMapper;
 
 namespace Shop.Api.Services
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _mapper = mapper;
         }
         public async Task<ProductResponseDTO> Create(ProductCreateDTO productCreateDTO)
         {
             try
             {
-                var product = new Product
-                {
-                    Id = Guid.NewGuid(),
-                    Name = productCreateDTO.Name,
-                    Price = productCreateDTO.Price,
-                    Description = productCreateDTO.Description,
-                    Stock = productCreateDTO.Stock,
-                    CreatedAt = DateTime.UtcNow
-                };
+                var product = _mapper.Map<Product>(productCreateDTO);
+                product.Id = Guid.NewGuid();
+                product.CreatedAt = DateTime.UtcNow;
                 await _productRepository.Create(product);
-                return new ProductResponseDTO
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Price = product.Price,
-                    Description = product.Description
-                };
+                return _mapper.Map<ProductResponseDTO>(product);
             }
             catch
             {
@@ -57,15 +48,7 @@ namespace Shop.Api.Services
             try
             {
                 var products = await _productRepository.GetAll();
-                return products.Where(p => p.IsDeleted == false)
-                               .Select(p => new ProductResponseDTO
-                               {
-                                   Id = p.Id,
-                                   Name = p.Name,
-                                   Price = p.Price,
-                                   Description = p.Description
-                               })
-                               .ToList();
+                return _mapper.Map<List<ProductResponseDTO>>(products);
             }
             catch (Exception ex) 
             {
@@ -76,43 +59,18 @@ namespace Shop.Api.Services
         public async Task<ProductResponseDTO> GetById(Guid id)
         {
             var product = await _productRepository.GetById(id);
-            return new ProductResponseDTO
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-                Description = product.Description
-            };
+            return _mapper.Map<ProductResponseDTO>(product);
         }
 
         public async Task<ProductResponseDTO> Update(Guid id, ProductUpdateDTO productUpdateDTO)
         {
             var existingProduct = await _productRepository.GetById(id);
 
-            if (productUpdateDTO.Name == null)
-            { productUpdateDTO.Name = existingProduct.Name; }
-            else { existingProduct.Name = productUpdateDTO.Name; }
-
-            if (productUpdateDTO.Description == null)
-            { productUpdateDTO.Description = existingProduct.Description; }
-            else { existingProduct.Description = productUpdateDTO.Description; }
-
-            if (productUpdateDTO.Stock == null)
-            { productUpdateDTO.Stock = existingProduct.Stock; }
-            else { existingProduct.Stock = productUpdateDTO.Stock; }
-
-            if (productUpdateDTO.Price == null)
-            { productUpdateDTO.Price = existingProduct.Price; }
-            else { existingProduct.Price = productUpdateDTO.Price; }
+            _mapper.Map(productUpdateDTO, existingProduct);
 
             await _productRepository.Update(existingProduct);
-            return new ProductResponseDTO
-            {
-                Id = existingProduct.Id,
-                Name = existingProduct.Name,
-                Price = existingProduct.Price,
-                Description = existingProduct.Description
-            };
+
+            return _mapper.Map<ProductResponseDTO>(existingProduct);
         }
     }
 }

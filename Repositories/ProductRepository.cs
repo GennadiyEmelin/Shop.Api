@@ -47,7 +47,7 @@ namespace Shop.Api.Repositories
         {
             try
             {
-                return await _context.Products.ToListAsync();
+                return await _context.Products.Where(p => p.IsDeleted == false).ToListAsync();
             }
             catch
             {
@@ -72,6 +72,7 @@ namespace Shop.Api.Repositories
             try
             {
                 var existingProduct = await _context.Products.FirstOrDefaultAsync(p => p.Id == Product.Id);
+                _context.Products.Update(Product);
                 await _context.SaveChangesAsync();
             }
             catch 
