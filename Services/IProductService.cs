@@ -1,13 +1,15 @@
-﻿using Shop.Api.DTO.Product;
+﻿using Shop.Api.DTO.Common;
+using Shop.Api.DTO.Product;
 
 namespace Shop.Api.Services
 {
     public interface IProductService
     {
-        public Task<List<ProductResponseDTO>> GetAll();
-        public Task<ProductResponseDTO> GetById(Guid id);
-        public Task<ProductResponseDTO> Create(ProductCreateDTO productCreateDTO);
-        public Task<ProductResponseDTO> Update(Guid id, ProductUpdateDTO productUpdateDTO);
-        public Task Delete(Guid id);
+        Task<List<ProductResponseDTO>> GetAll();
+        Task<ProductResponseDTO> GetById(Guid id);
+        Task<ProductResponseDTO> Create(ProductCreateDTO productCreateDTO);
+        Task<ProductResponseDTO> Update(Guid id, ProductUpdateDTO productUpdateDTO);
+        Task Delete(Guid id);
+        Task<List<ProductResponseDTO>> GetFiltered(ProductQueryParameters query);
     }
 }

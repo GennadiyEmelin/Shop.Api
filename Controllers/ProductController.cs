@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shop.Api.DTO.Common;
 using Shop.Api.DTO.Product;
 using Shop.Api.Services;
 
@@ -16,72 +18,43 @@ namespace Shop.Api.Controllers
             _productService = productService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<ProductResponseDTO>>> GetAllProducts()
         {
-            try
-            {
-                return await _productService.GetAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return Ok(await _productService.GetAll());
         }
 
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] ProductCreateDTO productDTO)
         {
-            try
-            {
-                await _productService.Create(productDTO);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _productService.Create(productDTO);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            try
-            {
-                await _productService.Delete(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _productService.Delete(id);
+            return Ok();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductResponseDTO>> GetById(Guid id)
         {
-            try
-            {
-                return await _productService.GetById(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return Ok(await _productService.GetById(id));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(Guid id, [FromBody] ProductUpdateDTO productUpdateDTO)
         {
-            try
-            {
-                await _productService.Update(id, productUpdateDTO);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return Ok(await _productService.Update(id, productUpdateDTO));
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<List<ProductResponseDTO>>> GetFiltered([FromQuery] ProductQueryParameters query)
+        {
+            return Ok(await _productService.GetFiltered(query));
         }
     }
 }

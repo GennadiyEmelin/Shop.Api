@@ -1,7 +1,8 @@
-﻿using Shop.Api.DTO.Product;
+﻿using AutoMapper;
+using Shop.Api.DTO.Common;
+using Shop.Api.DTO.Product;
 using Shop.Api.Models;
 using Shop.Api.Repositories;
-using AutoMapper;
 
 namespace Shop.Api.Services
 {
@@ -17,43 +18,22 @@ namespace Shop.Api.Services
         }
         public async Task<ProductResponseDTO> Create(ProductCreateDTO productCreateDTO)
         {
-            try
-            {
-                var product = _mapper.Map<Product>(productCreateDTO);
-                product.Id = Guid.NewGuid();
-                product.CreatedAt = DateTime.UtcNow;
-                await _productRepository.Create(product);
-                return _mapper.Map<ProductResponseDTO>(product);
-            }
-            catch
-            {
-                throw new Exception("Ошибка при добавлении товара");
-            }
+            var product = _mapper.Map<Product>(productCreateDTO);
+            product.Id = Guid.NewGuid();
+            product.CreatedAt = DateTime.UtcNow;
+            await _productRepository.Create(product);
+            return _mapper.Map<ProductResponseDTO>(product);
         }
 
         public async Task Delete(Guid id)
         {
-            try
-            {
-                await _productRepository.Delete(id);
-            }
-            catch (Exception ex) 
-            {
-                throw new Exception(ex.Message);
-            }
+            await _productRepository.Delete(id);
         }
 
         public async Task<List<ProductResponseDTO>> GetAll()
         {
-            try
-            {
-                var products = await _productRepository.GetAll();
-                return _mapper.Map<List<ProductResponseDTO>>(products);
-            }
-            catch (Exception ex) 
-            {
-                throw new Exception(ex.Message);
-            }
+            var products = await _productRepository.GetAll();
+            return _mapper.Map<List<ProductResponseDTO>>(products);
         }
 
         public async Task<ProductResponseDTO> GetById(Guid id)
@@ -72,5 +52,11 @@ namespace Shop.Api.Services
 
             return _mapper.Map<ProductResponseDTO>(existingProduct);
         }
+
+        public async Task<List<ProductResponseDTO>> GetFiltered(ProductQueryParameters query)
+        {
+            var products = await _productRepository.GetFiltered(query);
+            return _mapper.Map<List<ProductResponseDTO>>(products);
+        } 
     }
 }

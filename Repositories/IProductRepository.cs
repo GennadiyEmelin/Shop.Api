@@ -1,4 +1,5 @@
-﻿using Shop.Api.DTO.Product;
+﻿using Shop.Api.DTO.Common;
+using Shop.Api.DTO.Product;
 using Shop.Api.Models;
 
 namespace Shop.Api.Repositories
@@ -10,5 +11,6 @@ namespace Shop.Api.Repositories
         Task Create(Product product);
         Task Update(Product Product);
         Task Delete(Guid Id);
+        Task<List<Product>> GetFiltered(ProductQueryParameters query);
     }
 }
