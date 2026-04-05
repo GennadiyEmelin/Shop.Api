@@ -25,6 +25,7 @@ namespace Shop.Api.Controllers
             return Ok(await _productService.GetAll());
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] ProductCreateDTO productDTO)
         {
@@ -32,6 +33,7 @@ namespace Shop.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
@@ -45,6 +47,7 @@ namespace Shop.Api.Controllers
             return Ok(await _productService.GetById(id));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(Guid id, [FromBody] ProductUpdateDTO productUpdateDTO)
         {

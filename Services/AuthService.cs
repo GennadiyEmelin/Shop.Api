@@ -33,6 +33,8 @@ namespace Shop.Api.Services
                 var errors = string.Join("; ", result.Errors.Select(e => e.Description));
                 throw new Exception($"Ошибка регистрации: {errors}");
             }
+
+            await _userManager.AddToRoleAsync(user, "User");
         }
 
         public async Task<string> Login(LoginDTO dto)
@@ -45,16 +47,31 @@ namespace Shop.Api.Services
             return GenerateJwtToken(user);
         }
 
+        public async Task GetAdmin(LoginDTO dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+
+            if(user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
+                throw new Exception("Неверный логин или пароль");
+
+            await _userManager.AddToRoleAsync(user, "Admin");
+        }
+
         private string GenerateJwtToken(ApplicationUser user)
         {
             var jwtSettings = _config.GetSection("Jwt");
+            var roles = _userManager.GetRolesAsync(user).Result;
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName)
-        };
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings["Key"]));

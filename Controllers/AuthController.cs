@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shop.Api.DTO.Auth;
 using Shop.Api.Services;
 
@@ -27,6 +28,14 @@ namespace Shop.Api.Controllers
         {
             var token = await _authService.Login(dto);
             return Ok(new { token });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("get-admin")]
+        public async Task<IActionResult> GetAdmin(LoginDTO dto)
+        {
+            await _authService.GetAdmin(dto);
+            return Ok();
         }
     }
 }
